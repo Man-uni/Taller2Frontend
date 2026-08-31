@@ -29,16 +29,27 @@ export default function Home() {
     const [productosVisibles, setProductosVisibles] = useState<Producto[]>([]);
     const [filtro, setFiltro] = useState("");
     const [mensaje, setMensaje] = useState("");
+    const [cargando, setCargando] = useState(false);
+	const [error, setError] = useState("");
 
-    useEffect(() => {
-        async function cargarProductos() {
+
+    async function cargarProductos() {
+        setCargando(true)
+        try {
             const respuesta = await fetch(API_URL);
-
+            if (!respuesta.ok) throw new Error("No se pudo conectar con la API");
             const lista: Producto[] = await respuesta.json();
             setProductos(lista);
             setProductosVisibles(lista);
+        } catch (err) {
+            setError("No se pudo conectar con la api ")
+        } finally {
+            setCargando(false);
         }
 
+    }
+    
+    useEffect(() => {
         cargarProductos();
     }, []);
 
@@ -62,9 +73,16 @@ export default function Home() {
         <main>
             <Link href="/">Inicio</Link>
             <h1>Lista de productos</h1>
+			{error && (
+				<div className="bg-red-50 border border-red-200 text-red-700
+							px-4 py-2 rounded-lg">{error}</div>
+			)}
             <div>
                 <label htmlFor="filtro-productos">Buscar por nombre o categoría: </label>
                 <input
+                className="border rounded-lg px-3 py-2 text-sm
+             focus:ring-2 focus:ring-violet-500"
+
                     id="filtro-productos"
                     type="search"
                     value={filtro}
@@ -72,22 +90,27 @@ export default function Home() {
                     placeholder="Ej. Mouse o Periféricos"
                 />
                 <button
+                    disabled={cargando}
                     type="button"
                     onClick={filtrarProductos}
-                    className="ml-2 bg-blue-600 px-3 py-1 text-white hover:bg-blue-700"
+                    className="ml-2 bg-blue-600 px-3 py-1 text-white hover:bg-blue-700 disabled:opacity-50"
                 >
                     Filtrar
                 </button>
             </div>
             {mensaje && <p role="alert">{mensaje}</p>}
-            <ul>
-                {productosVisibles.map((producto) => (
-                    <li key={producto.codigo}>
-                        <TarjetaProducto {...producto} />
-                    </li>
-                ))}
-            </ul>
-            {!mensaje && productosVisibles.length === 0 && <p>No se encontraron productos.</p>}
+            {cargando ? (
+                <p className="text-gray-500 animate-pulse">Cargando productos...</p>
+            ) : (
+                <ul className="divide-y divide-gray-200 border border-gray-200 rounded-lg">
+                    {productosVisibles.map((producto) => (
+                        <li key={producto.codigo}>
+                            <TarjetaProducto {...producto} />
+                        </li>
+                    ))}
+                </ul>
+            )}
+            {!cargando && !mensaje && productosVisibles.length === 0 && <p>No se encontraron productos.</p>}
         </main>
 	);
 }
