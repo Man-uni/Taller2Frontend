@@ -36,10 +36,13 @@ export default function Home() {
     const [form, setForm] = useState<Producto>(productoInicial);
     const [editando, setEditando] = useState(false);
     const [mensaje, setMensaje] = useState("");
+    const [cargando, setCargando] = useState(false);
 
     async function cargarProductos() {
+        setCargando(true);
         const respuesta = await fetch(API_URL);
         setProductos(await respuesta.json());
+        setCargando(false);
     }
 
     useEffect(() => {
@@ -63,12 +66,14 @@ export default function Home() {
         event.preventDefault();
         if (!editando) return;
 
+        setCargando(true);
         const respuesta = await fetch(`${API_URL}/${encodeURIComponent(form.codigo)}`, {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(form),
         });
         const resultado = await respuesta.json();
+        setCargando(false);
 
         setForm(productoInicial);
         setEditando(false);
@@ -83,17 +88,22 @@ export default function Home() {
             {mensaje && <p role="status">{mensaje}</p>}
 
             <form className="space-y-4"></form>
-            <ul className="divide-y divide-gray-200 border border-gray-200 rounded-lg">
-                {productos.map((producto) => (
-                    <li key={producto.codigo}>
-                        <TarjetaProducto
-                            {...producto}
-                            accion="Editar"
-                            onAccion={() => editar(producto)}
-                        />
-                    </li>
-                ))}
-            </ul>
+            {cargando ? (
+                <p className="text-gray-500 animate-pulse">Cargando productos...</p>
+            ) : (
+                <ul className="divide-y divide-gray-200 border border-gray-200 rounded-lg">
+                    {productos.map((producto) => (
+                        <li key={producto.codigo}>
+                            <TarjetaProducto
+                                {...producto}
+                                accion="Editar"
+                                onAccion={() => editar(producto)}
+                                disabled={cargando}
+                            />
+                        </li>
+                    ))}
+                </ul>
+            )}
 
             {editando && (
                 <form onSubmit={guardar}>
@@ -157,10 +167,10 @@ type="text" value={form.codigo} readOnly />
                         />
                     </label>
                     <br />
-                    <button className="bg-violet-600 hover:bg-violet-700 text-white
-                   font-semibold px-4 py-2 rounded-lg transition" type="submit">Guardar cambios</button>{" "}
-                    <button  className="bg-violet-600 hover:bg-violet-700 text-white
-                   font-semibold px-4 py-2 rounded-lg transition"type="button" onClick={() => setEditando(false)}>
+                    <button disabled={cargando} className="bg-violet-600 hover:bg-violet-700 text-white
+                   font-semibold px-4 py-2 rounded-lg transition disabled:opacity-50" type="submit">Guardar cambios</button>{" "}
+                    <button disabled={cargando} className="bg-violet-600 hover:bg-violet-700 text-white
+                   font-semibold px-4 py-2 rounded-lg transition disabled:opacity-50" type="button" onClick={() => setEditando(false)}>
                         Cancelar
                     </button>
                 </form>

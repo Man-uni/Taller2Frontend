@@ -29,14 +29,17 @@ export default function Home() {
     const [productosVisibles, setProductosVisibles] = useState<Producto[]>([]);
     const [filtro, setFiltro] = useState("");
     const [mensaje, setMensaje] = useState("");
+    const [cargando, setCargando] = useState(false);
 
     useEffect(() => {
         async function cargarProductos() {
+            setCargando(true);
             const respuesta = await fetch(API_URL);
 
             const lista: Producto[] = await respuesta.json();
             setProductos(lista);
             setProductosVisibles(lista);
+            setCargando(false);
         }
 
         cargarProductos();
@@ -75,22 +78,27 @@ export default function Home() {
                     placeholder="Ej. Mouse o Periféricos"
                 />
                 <button
+                    disabled={cargando}
                     type="button"
                     onClick={filtrarProductos}
-                    className="ml-2 bg-blue-600 px-3 py-1 text-white hover:bg-blue-700"
+                    className="ml-2 bg-blue-600 px-3 py-1 text-white hover:bg-blue-700 disabled:opacity-50"
                 >
                     Filtrar
                 </button>
             </div>
             {mensaje && <p role="alert">{mensaje}</p>}
-            <ul className="divide-y divide-gray-200 border border-gray-200 rounded-lg">
-                {productosVisibles.map((producto) => (
-                    <li key={producto.codigo}>
-                        <TarjetaProducto {...producto} />
-                    </li>
-                ))}
-            </ul>
-            {!mensaje && productosVisibles.length === 0 && <p>No se encontraron productos.</p>}
+            {cargando ? (
+                <p className="text-gray-500 animate-pulse">Cargando productos...</p>
+            ) : (
+                <ul className="divide-y divide-gray-200 border border-gray-200 rounded-lg">
+                    {productosVisibles.map((producto) => (
+                        <li key={producto.codigo}>
+                            <TarjetaProducto {...producto} />
+                        </li>
+                    ))}
+                </ul>
+            )}
+            {!cargando && !mensaje && productosVisibles.length === 0 && <p>No se encontraron productos.</p>}
         </main>
 	);
 }

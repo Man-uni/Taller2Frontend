@@ -18,11 +18,14 @@ type Producto = {
 export default function Home() {
 	const [productos, setProductos] = useState<Producto[]>([]);
 	const [mensaje, setMensaje] = useState("");
+	const [cargando, setCargando] = useState(false);
 
 	async function cargarProductos() {
+		setCargando(true);
 		const respuesta = await fetch(API_URL);
 
 		setProductos(await respuesta.json());
+		setCargando(false);
 	}
 
 	useEffect(() => {
@@ -32,11 +35,12 @@ export default function Home() {
 	async function eliminar(codigo: string) {
 		if (!window.confirm("¿Querés eliminar este producto?")) return;
 
-
+		setCargando(true);
 		const respuesta = await fetch(`${API_URL}/${encodeURIComponent(codigo)}`, {
 			method: "DELETE",
 		});
 		const resultado = await respuesta.json();
+		setCargando(false);
 
 		await cargarProductos();
 
@@ -47,17 +51,22 @@ export default function Home() {
 			<Link href="/">Inicio</Link>
 			<h1>Baja de productos</h1>
 			{mensaje && <p role="status">{mensaje}</p>}
-			<ul className="divide-y divide-gray-200 border border-gray-200 rounded-lg">
-				{productos.map((producto) => (
-					<li key={producto.codigo}>
-						<TarjetaProducto
-							{...producto}
-							accion="Eliminar"
-							onAccion={() => eliminar(producto.codigo)}
-						/>
-					</li>
-				))}
-			</ul>
+			{cargando ? (
+				<p className="text-gray-500 animate-pulse">Cargando productos...</p>
+			) : (
+				<ul className="divide-y divide-gray-200 border border-gray-200 rounded-lg">
+					{productos.map((producto) => (
+						<li key={producto.codigo}>
+							<TarjetaProducto
+								{...producto}
+								accion="Eliminar"
+								onAccion={() => eliminar(producto.codigo)}
+								disabled={cargando}
+							/>
+						</li>
+					))}
+				</ul>
+			)}
 		</main>
 	);
 }

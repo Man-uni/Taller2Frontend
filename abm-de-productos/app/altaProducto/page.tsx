@@ -1,5 +1,6 @@
 
 "use client";
+import { useState } from "react";
 import Link from "next/link";
 
 
@@ -23,6 +24,8 @@ type Producto = {
 //     "stock": 24
 //   },
 export default function Home() {
+    const [cargando, setCargando] = useState(false);
+
     // Formulario para agregar un producto (POST)
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -35,6 +38,7 @@ export default function Home() {
             stock: parseInt(formData.get("stock") as string, 10),
         };
 
+        setCargando(true);
         await fetch(API_URL, {
             method: "POST",
             headers: {
@@ -42,6 +46,7 @@ export default function Home() {
             },
             body: JSON.stringify(nuevoProducto),
         });
+        setCargando(false);
     }
 
     return (
@@ -84,8 +89,8 @@ type="number" name="precio" step="0.01" required />
  type="number" name="stock" required />
                 </label>
                 <br />
-                <button className="bg-violet-600 hover:bg-violet-700 text-white
-                   font-semibold px-4 py-2 rounded-lg transition" type="submit">Agregar Producto</button>
+                <button disabled={cargando} className="bg-violet-600 hover:bg-violet-700 text-white
+                   font-semibold px-4 py-2 rounded-lg transition disabled:opacity-50" type="submit">Agregar Producto</button>
             </form>
         </main>
     );      
