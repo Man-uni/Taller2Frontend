@@ -25,6 +25,7 @@ type Producto = {
 //   },
 export default function Home() {
     const [cargando, setCargando] = useState(false);
+	const [error, setError] = useState("");
 
     // Formulario para agregar un producto (POST)
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -39,20 +40,29 @@ export default function Home() {
         };
 
         setCargando(true);
-        await fetch(API_URL, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(nuevoProducto),
-        });
-        setCargando(false);
+        try {
+            await fetch(API_URL, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(nuevoProducto),
+            });
+		} catch (err) {
+			setError("No se pudo conectar con la api ")
+		} finally {
+			setCargando(false);
+		}
     }
 
     return (
         <main>
             <Link href="/">Inicio</Link>
             <h1>Alta de Producto</h1>
+			{error && (
+				<div className="bg-red-50 border border-red-200 text-red-700
+							px-4 py-2 rounded-lg">{error}</div>
+			)}
             <form onSubmit={handleSubmit}>
                 <label>
                     Código:

@@ -19,14 +19,16 @@ export default function Home() {
 	const [productos, setProductos] = useState<Producto[]>([]);
 	const [mensaje, setMensaje] = useState("");
 	const [error, setError] = useState("");
+	const [cargando, setCargando] = useState(false);
 
 	async function cargarProductos() {
+		setCargando(true)
 		try {
 			const respuesta = await fetch(API_URL);
-			if (!respuesta.ok) throw new Error("No se pudo obtener el listado");
+			if (!respuesta.ok) throw new Error("No se pudo conectar con la API");
 			setProductos(await respuesta.json());
 		} catch (err) {
-			setError("")
+			setError("No se pudo conectar con la api ")
 		} finally {
 			setCargando(false);
 		}
@@ -34,7 +36,7 @@ export default function Home() {
 	}
 
 	useEffect(() => {
-		cargarProductos().catch((error) => setMensaje(error.message));
+		cargarProductos();
 	}, []);
 
 	async function eliminar(codigo: string) {
@@ -53,13 +55,12 @@ export default function Home() {
 
 	return (
 		<main>
+			<Link href="/">Inicio</Link>
+			<h1>Baja de productos</h1>
 			{error && (
 				<div className="bg-red-50 border border-red-200 text-red-700
 							px-4 py-2 rounded-lg">{error}</div>
 			)}
-			<Link href="/">Inicio</Link>
-			<h1>Baja de productos</h1>
-			{mensaje && <p role="status">{mensaje}</p>}
 			{cargando ? (
 				<p className="text-gray-500 animate-pulse">Cargando productos...</p>
 			) : (

@@ -37,16 +37,24 @@ export default function Home() {
     const [editando, setEditando] = useState(false);
     const [mensaje, setMensaje] = useState("");
     const [cargando, setCargando] = useState(false);
+    const [error, setError] = useState("");
 
-    async function cargarProductos() {
-        setCargando(true);
-        const respuesta = await fetch(API_URL);
-        setProductos(await respuesta.json());
-        setCargando(false);
-    }
+	async function cargarProductos() {
+		setCargando(true)
+		try {
+			const respuesta = await fetch(API_URL);
+			if (!respuesta.ok) throw new Error("No se pudo conectar con la API");
+			setProductos(await respuesta.json());
+		} catch (err) {
+			setError("No se pudo conectar con la api ")
+		} finally {
+			setCargando(false);
+		}
+
+	}
 
     useEffect(() => {
-        cargarProductos().catch((error) => setMensaje(error.message));
+        cargarProductos().catch((error) => setError("No se pudo conectar con la API"));
     }, []);
 
     function editar(producto: Producto) {
@@ -62,29 +70,40 @@ export default function Home() {
         }));
     }
 
-    async function guardar(event: React.FormEvent<HTMLFormElement>) {
+    async function guardar(event: React.FormEvent<HTMLFormElement>) {   
         event.preventDefault();
         if (!editando) return;
 
         setCargando(true);
-        const respuesta = await fetch(`${API_URL}/${encodeURIComponent(form.codigo)}`, {
-            method: "PUT",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(form),
-        });
-        const resultado = await respuesta.json();
-        setCargando(false);
+        try {
+            const respuesta = await fetch(`${API_URL}/${encodeURIComponent(form.codigo)}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(form),
+            });
+            if (!respuesta.ok) throw new Error("No se pudo conectar con la API");
+            setProductos(await respuesta.json());
+            setForm(productoInicial);
+            setEditando(false);
+            setMensaje("Producto modificado correctamente.");
+            await cargarProductos();
+        } catch (err) {
+            setError("No se pudo conectar con la api ")
+        } finally {
+            setCargando(false);
+        }
 
-        setForm(productoInicial);
-        setEditando(false);
-        setMensaje("Producto modificado correctamente.");
-        await cargarProductos();
+
     }
 
     return (
         <main>
             <Link href="/">Inicio</Link>
             <h1>Modificar producto</h1>
+			{error && (
+				<div className="bg-red-50 border border-red-200 text-red-700
+							px-4 py-2 rounded-lg">{error}</div>
+			)}
             {mensaje && <p role="status">{mensaje}</p>}
 
             <form className="space-y-4"></form>

@@ -30,18 +30,25 @@ export default function Home() {
     const [filtro, setFiltro] = useState("");
     const [mensaje, setMensaje] = useState("");
     const [cargando, setCargando] = useState(false);
+	const [error, setError] = useState("");
 
-    useEffect(() => {
+
         async function cargarProductos() {
-            setCargando(true);
-            const respuesta = await fetch(API_URL);
+            setCargando(true)
+            try {
+                const respuesta = await fetch(API_URL);
+                if (!respuesta.ok) throw new Error("No se pudo conectar con la API");
+                const lista: Producto[] = await respuesta.json();
+                setProductos(lista);
+                setProductosVisibles(lista);
+            } catch (err) {
+                setError("No se pudo conectar con la api ")
+            } finally {
+                setCargando(false);
+            }
 
-            const lista: Producto[] = await respuesta.json();
-            setProductos(lista);
-            setProductosVisibles(lista);
-            setCargando(false);
         }
-
+    useEffect(() => {
         cargarProductos();
     }, []);
 
@@ -65,6 +72,10 @@ export default function Home() {
         <main>
             <Link href="/">Inicio</Link>
             <h1>Lista de productos</h1>
+			{error && (
+				<div className="bg-red-50 border border-red-200 text-red-700
+							px-4 py-2 rounded-lg">{error}</div>
+			)}
             <div>
                 <label htmlFor="filtro-productos">Buscar por nombre o categoría: </label>
                 <input
