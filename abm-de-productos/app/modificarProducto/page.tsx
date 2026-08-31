@@ -82,7 +82,8 @@ export default function Home() {
             <h1>Modificar producto</h1>
             {mensaje && <p role="status">{mensaje}</p>}
 
-            <ul>
+            <form className="space-y-4"></form>
+            <ul className="divide-y divide-gray-200 border border-gray-200 rounded-lg">
                 {productos.map((producto) => (
                     <li key={producto.codigo}>
                         <TarjetaProducto
@@ -98,12 +99,17 @@ export default function Home() {
                 <form onSubmit={guardar}>
                     <label>
                         Código:
-                        <input type="text" value={form.codigo} readOnly />
+                        <input className="border rounded-lg px-3 py-2 text-sm
+             focus:ring-2 focus:ring-violet-500"
+type="text" value={form.codigo} readOnly />
                     </label>
                     <br />
                     <label>
                         Nombre:
                         <input
+                        className="border rounded-lg px-3 py-2 text-sm
+             focus:ring-2 focus:ring-violet-500"
+
                             type="text"
                             value={form.nombre}
                             onChange={(event) => cambiarCampo("nombre", event.target.value)}
@@ -114,6 +120,9 @@ export default function Home() {
                     <label>
                         Categoría:
                         <input
+                        className="border rounded-lg px-3 py-2 text-sm
+             focus:ring-2 focus:ring-violet-500"
+
                             type="text"
                             value={form.categoria}
                             onChange={(event) => cambiarCampo("categoria", event.target.value)}
@@ -124,6 +133,9 @@ export default function Home() {
                     <label>
                         Precio:
                         <input
+                        className="border rounded-lg px-3 py-2 text-sm
+             focus:ring-2 focus:ring-violet-500"
+
                             type="number"
                             step="0.01"
                             value={form.precio}
@@ -135,6 +147,9 @@ export default function Home() {
                     <label>
                         Stock:
                         <input
+                        className="border rounded-lg px-3 py-2 text-sm
+             focus:ring-2 focus:ring-violet-500"
+
                             type="number"
                             value={form.stock}
                             onChange={(event) => cambiarCampo("stock", event.target.value)}
@@ -142,8 +157,10 @@ export default function Home() {
                         />
                     </label>
                     <br />
-                    <button type="submit">Guardar cambios</button>{" "}
-                    <button type="button" onClick={() => setEditando(false)}>
+                    <button className="bg-violet-600 hover:bg-violet-700 text-white
+                   font-semibold px-4 py-2 rounded-lg transition" type="submit">Guardar cambios</button>{" "}
+                    <button  className="bg-violet-600 hover:bg-violet-700 text-white
+                   font-semibold px-4 py-2 rounded-lg transition"type="button" onClick={() => setEditando(false)}>
                         Cancelar
                     </button>
                 </form>

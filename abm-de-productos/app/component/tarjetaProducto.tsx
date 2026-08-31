@@ -17,7 +17,8 @@ export default function TarjetaProducto({codigo, nombre, categoria, precio, stoc
             <h2>{precio}</h2>
             <h2>{stock}</h2>
             {accion && onAccion && (
-                <button type="button" onClick={onAccion}>
+                <button className="bg-violet-600 hover:bg-violet-700 text-white
+                   font-semibold px-4 py-2 rounded-lg transition" type="button" onClick={onAccion}>
                     {accion}
                 </button>
             )}

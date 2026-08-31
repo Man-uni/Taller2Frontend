@@ -51,30 +51,41 @@ export default function Home() {
             <form onSubmit={handleSubmit}>
                 <label>
                     Código:
-                    <input type="text" name="codigo" required />
+                    <input className="border rounded-lg px-3 py-2 text-sm
+             focus:ring-2 focus:ring-violet-500"
+type="text" name="codigo" required />
                 </label>
                 <br />
                 <label>
                     Nombre:
-                    <input type="text" name="nombre" required />
+                    <input className="border rounded-lg px-3 py-2 text-sm
+             focus:ring-2 focus:ring-violet-500"
+                        type="text" name="nombre" required />
                 </label>
                 <br />
                 <label>
                     Categoría:
-                    <input type="text" name="categoria" required />
+                    <input  className="border rounded-lg px-3 py-2 text-sm
+             focus:ring-2 focus:ring-violet-500"
+type="text" name="categoria" required />
                 </label>
                 <br />
                 <label>
                     Precio:
-                    <input type="number" name="precio" step="0.01" required />
+                    <input  className="border rounded-lg px-3 py-2 text-sm
+             focus:ring-2 focus:ring-violet-500"
+type="number" name="precio" step="0.01" required />
                 </label>
                 <br />
                 <label>
                     Stock:
-                    <input type="number" name="stock" required />
+                    <input className="border rounded-lg px-3 py-2 text-sm
+             focus:ring-2 focus:ring-violet-500"
+ type="number" name="stock" required />
                 </label>
                 <br />
-                <button type="submit">Agregar Producto</button>
+                <button className="bg-violet-600 hover:bg-violet-700 text-white
+                   font-semibold px-4 py-2 rounded-lg transition" type="submit">Agregar Producto</button>
             </form>
         </main>
     );      

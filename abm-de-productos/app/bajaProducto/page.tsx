@@ -47,7 +47,7 @@ export default function Home() {
 			<Link href="/">Inicio</Link>
 			<h1>Baja de productos</h1>
 			{mensaje && <p role="status">{mensaje}</p>}
-			<ul>
+			<ul className="divide-y divide-gray-200 border border-gray-200 rounded-lg">
 				{productos.map((producto) => (
 					<li key={producto.codigo}>
 						<TarjetaProducto

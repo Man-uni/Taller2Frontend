@@ -65,6 +65,9 @@ export default function Home() {
             <div>
                 <label htmlFor="filtro-productos">Buscar por nombre o categoría: </label>
                 <input
+                className="border rounded-lg px-3 py-2 text-sm
+             focus:ring-2 focus:ring-violet-500"
+
                     id="filtro-productos"
                     type="search"
                     value={filtro}
@@ -80,7 +83,7 @@ export default function Home() {
                 </button>
             </div>
             {mensaje && <p role="alert">{mensaje}</p>}
-            <ul>
+            <ul className="divide-y divide-gray-200 border border-gray-200 rounded-lg">
                 {productosVisibles.map((producto) => (
                     <li key={producto.codigo}>
                         <TarjetaProducto {...producto} />
